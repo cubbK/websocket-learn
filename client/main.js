@@ -1,7 +1,6 @@
 import "./style.css";
 import javascriptLogo from "./javascript.svg";
 import viteLogo from "/vite.svg";
-import { setupCounter } from "./counter.js";
 
 document.querySelector("#app").innerHTML = `
   <div>
@@ -13,12 +12,26 @@ document.querySelector("#app").innerHTML = `
     </a>
     <h1>Hello Vite!</h1>
     <div class="card">
-      <button id="counter" type="button"></button>
+      <button id="counter" type="button">Send event</button>
     </div>
-    <p class="read-the-docs">
-      Click on the Vite logo to learn more
-    </p>
   </div>
 `;
 
+export function setupCounter(element) {
+  element.addEventListener("click", () => socket.send("Hey from client"));
+}
+
 setupCounter(document.querySelector("#counter"));
+
+// Create WebSocket connection.
+const socket = new WebSocket("ws://localhost:8080/ws/");
+
+// Connection opened
+socket.addEventListener("open", (event) => {
+  socket.send("Hello Server!");
+});
+
+// Listen for messages
+socket.addEventListener("message", (event) => {
+  console.log("Message from server ", event.data);
+});
